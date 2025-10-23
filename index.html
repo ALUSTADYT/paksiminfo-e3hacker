@@ -1,427 +1,795 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light"> <!-- Default theme is light -->
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E3 HACKR SIM DATA BASE</title>
-  
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap Icons CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- CSS Styles -->
+    <title>E3-HACKER - Sim Info Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
         :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --text-light: #555;
-            --border-color: #e0e0e0;
-            
-            --primary-blue: #0052D4;
-            --primary-blue-light: #65C7F7;
-            --success-green: #00B09B;
-            --alert-red: #D31027;
-            --secondary-orange: #FF8C00;
-            --whatsapp-green: #25D366;
-
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --border-radius: 12px;
-            --transition: all 0.3s ease-in-out;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --text-primary: #00ff00;
+            --text-secondary: #00cc00;
+            --accent: #00ff00;
+            --accent-glow: rgba(0, 255, 0, 0.3);
+            --border-color: #003300;
+            --button-bg: #002200;
+            --button-hover: #004400;
+            --error-color: #ff3333;
+            --success-color: #00ff00;
         }
         
-        [data-theme="dark"] {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --text-light: #a0a0a0;
-            --border-color: #333;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        .light-mode {
+            --bg-primary: #f0f0f0;
+            --bg-secondary: #ffffff;
+            --text-primary: #006600;
+            --text-secondary: #008800;
+            --accent: #008800;
+            --accent-glow: rgba(0, 136, 0, 0.2);
+            --border-color: #cccccc;
+            --button-bg: #e0e0e0;
+            --button-hover: #d0d0d0;
+            --error-color: #cc0000;
+            --success-color: #008800;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
+        
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.7;
-            transition: var(--transition);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
-
-        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
-
-        .main-header {
-            background: linear-gradient(45deg, var(--primary-blue), var(--primary-blue-light));
-            color: white; padding: 2.5rem 0; text-align: center; position: relative;
-        }
-        .main-header h1 { font-size: 2.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .main-header p { opacity: 0.9; font-size: 1.1rem; }
-        .main-footer { text-align: center; padding: 2rem 0; margin-top: 2rem; color: var(--text-light); font-size: 0.9rem; }
         
-        #theme-toggle {
-            position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3); color: white; width: 45px; height: 45px;
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; transition: var(--transition);
+        /* Matrix Background Effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
         }
-        #theme-toggle:hover { background: rgba(255, 255, 255, 0.3); }
-
-        main { padding: 2.5rem 0; }
-        .card {
-            background-color: var(--card-bg); border-radius: var(--border-radius); padding: 2.5rem;
-            box-shadow: var(--shadow); margin-bottom: 2rem; border: 1px solid var(--border-color);
-            transition: var(--transition); position: relative;
-        }
-
-        .search-card h2 { text-align: center; margin-bottom: 1.5rem; font-weight: 600; }
-        .form-group { position: relative; }
-        #phone-number {
-            width: 100%; padding: 15px 20px 15px 50px; border: 2px solid var(--border-color);
-            border-radius: 8px; font-size: 1.1rem; font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color); color: var(--text-color); transition: var(--transition);
-        }
-        #phone-number:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(0, 82, 212, 0.15); }
-        .form-group .icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: #aaa; transition: var(--transition); }
-        #phone-number:focus + .icon { color: var(--primary-blue); }
-
-        #search-button {
-            display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;
-            padding: 15px 20px; background: linear-gradient(45deg, var(--primary-blue), #4A90E2); color: white;
-            font-size: 1.2rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer;
-            transition: var(--transition); margin-top: 1.5rem;
-        }
-        #search-button:hover:not(:disabled) { box-shadow: 0 8px 25px rgba(0, 82, 212, 0.3); transform: translateY(-3px); }
-        #search-button:disabled { background: #999; cursor: not-allowed; }
-
-        #results-container .card, #results-container .alert { opacity: 0; transform: translateY(20px); animation: fadeIn 0.5s forwards ease-out; }
-        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
-        .alert { display: flex; align-items: center; gap: 15px; padding: 1.5rem; border-radius: 8px; font-weight: 500; font-size: 1.1rem; }
-        .alert i { font-size: 1.5rem; }
-        .alert-danger { background-color: rgba(211, 16, 39, 0.1); color: var(--alert-red); border: 1px solid var(--alert-red); }
-        .alert-info { background-color: rgba(0, 82, 212, 0.1); color: var(--primary-blue); border: 1px solid var(--primary-blue); }
-
-        .results-summary { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; opacity: 0; animation: fadeIn 0.5s 0.2s forwards; }
-        .result-card { border-left: 5px solid var(--success-green); transition: var(--transition); }
-        .result-card:hover { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
-        .result-card + .result-card { margin-top: 1.5rem; }
-        .result-card-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
-        .result-card-header-info { display: flex; align-items: center; gap: 15px; }
-        .result-card-header i { font-size: 2.5rem; color: var(--primary-blue); }
-        .result-card-header h3 { font-size: 1.4rem; font-weight: 600; margin: 0; }
-        .result-details { list-style: none; padding: 0; }
-        .result-details li { display: flex; align-items: flex-start; gap: 15px; padding: 0.75rem 0; font-size: 1rem; }
-        .result-details li + li { border-top: 1px dashed #eee; }
-        [data-theme="dark"] .result-details li + li { border-top-color: var(--border-color); }
-        .result-details i { font-size: 1.2rem; color: var(--secondary-orange); margin-top: 4px; width: 20px; text-align: center; }
-        .result-details strong { font-weight: 600; color: var(--text-light); min-width: 100px; }
-        .result-details span { word-break: break-word; }
-        .network-info { display: flex; align-items: center; gap: 8px; }
-        .network-logo { width: 24px; height: 24px; }
-        .text-success { color: var(--success-green) !important; }
-        .text-danger { color: var(--alert-red) !important; }
-
-        .copy-btn {
-            position: absolute; top: 20px; right: 20px; background: var(--bg-color);
-            border: 1px solid var(--border-color); color: var(--text-light);
-            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: var(--transition);
-        }
-        .copy-btn:hover { background-color: var(--primary-blue); color: white; }
-        .copy-btn.copied { background-color: var(--success-green); color: white; }
-
-        .source-badge { font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 20px; color: white; text-transform: uppercase; }
-        .source-cache { background-color: var(--success-green); }
-        .source-upstream { background-color: var(--secondary-orange); }
-
-        #history-container { display: none; }
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; transition: var(--transition); }
-        .history-item + .history-item { margin-top: 0.75rem; }
-        .history-item:hover { background-color: var(--bg-color); border-color: var(--primary-blue); }
-        .history-item .info span { display: block; }
-        .history-item .info .name { font-weight: 600; color: var(--text-color); }
-        .history-item .info .number { font-size: 0.9rem; color: var(--text-light); }
-        .history-item .action-icon i { font-size: 1.2rem; color: var(--text-light); }
-        #clear-history { display: block; margin: 1.5rem auto 0; background: none; border: none; color: var(--alert-red); font-weight: 500; cursor: pointer; font-size: 0.9rem; }
         
-        .loader { border: 4px solid var(--bg-color); border-top: 4px solid var(--primary-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 3rem auto; }
-        .button-loader { width: 22px; height: 22px; border-width: 3px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .matrix-char {
+            position: absolute;
+            color: var(--accent);
+            font-size: 14px;
+            animation: matrixFall linear infinite;
+        }
+        
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            animation: scanning 3s infinite;
+        }
+        
+        @keyframes scanning {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            text-shadow: 0 0 10px var(--accent-glow);
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--button-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--button-hover);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        
+        .tool-container {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            text-shadow: 0 0 5px var(--accent-glow);
+        }
+        
+        .search-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-option {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--button-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            transition: left 0.5s;
+        }
+        
+        .option-btn:hover::before {
+            left: 100%;
+        }
+        
+        .option-btn.active {
+            background: var(--button-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        
+        .option-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px 0 0 8px;
+            font-size: 1.1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        
+        button {
+            padding: 15px 25px;
+            background: var(--button-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            background: var(--button-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .result-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-label {
+            font-weight: bold;
+            width: 120px;
+            color: var(--text-secondary);
+        }
+        
+        .result-value {
+            flex: 1;
+        }
+        
+        .no-data {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--error-color);
+            padding: 30px;
+        }
+        
+        .more-tools {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .more-tools-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--button-bg);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .more-tools-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            transition: left 0.5s;
+        }
+        
+        .more-tools-btn:hover::before {
+            left: 100%;
+        }
+        
+        .more-tools-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            color: var(--text-secondary);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2rem;
+        }
+        
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+            color: var(--accent);
+        }
+        
+        .credit {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+        
+        .numbers-count {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .number-item {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .number-header {
+            font-weight: bold;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .created-by {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .validation-error {
+            text-align: center;
+            padding: 20px;
+            color: var(--error-color);
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid var(--error-color);
+        }
+        
+        .example-number {
+            color: var(--accent);
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 600px) {
+            .search-options {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            input, button {
+                width: 100%;
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .result-row {
+                flex-direction: column;
+            }
+            
+            .result-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <header class="main-header">
-        <div class="container">
-            <h1><i class="bi bi-sim-fill"></i>E3-HACKER SIM Database</h1>
-            <p>Your Modern Portal for Telecom Information</p>
-        </div>
-        <button id="theme-toggle" title="Toggle Theme"><i class="bi bi-moon-stars-fill"></i></button>
-    </header>
-
-    <main class="container">
-        <!-- Search Card -->
-        <div class="card search-card">
-            <h2><i class="bi bi-search"></i> Find SIM Details</h2>
-            <form id="search-form">
-                <div class="form-group">
-                    <input type="text" id="phone-number" placeholder="Enter number or CNIC..." required>
-                    <i class="bi bi-phone-fill icon"></i>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="container">
+        <header>
+            <h1>E3-HACKER</h1>
+            <p class="tagline">SECURE INFORMATION RETRIEVAL SYSTEM</p>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i> DARK MODE
+            </button>
+        </header>
+        
+        <div class="tool-container">
+            <h2 class="tool-title">SIM INFORMATION TOOL</h2>
+            
+            <div class="search-options">
+                <div class="search-option">
+                    <button class="option-btn active" id="phoneOption">
+                        <i class="fas fa-phone"></i> SEARCH BY PHONE
+                    </button>
                 </div>
-                <button type="submit" id="search-button">
-                    <span class="button-text">Search</span>
-                    <div class="loader button-loader" style="display: none;"></div>
-                </button>
-            </form>
-        </div>
-
-        <!-- History Section -->
-        <div class="card" id="history-container">
-            <h2><i class="bi bi-clock-history"></i> Recent Searches</h2>
-            <div id="history-list"></div>
-            <button id="clear-history">Clear History</button>
-        </div>
-
-        <!-- Results Section -->
-        <div id="results-container">
-            <div class="card alert alert-info">
-                <i class="bi bi-info-circle-fill"></i>
-                <span>Enter a number or CNIC above to begin your search. All results will appear here.</span>
+                <div class="search-option">
+                    <button class="option-btn" id="cnicOption">
+                        <i class="fas fa-id-card"></i> SEARCH BY CNIC
+                    </button>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="searchInput" placeholder="ENTER 11-DIGIT PHONE NUMBER" maxlength="11">
+                <button id="searchBtn">INITIATE SCAN</button>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="no-data">AWAITING INPUT... READY TO SCAN</div>
+            </div>
+            
+            <div class="more-tools">
+                <a href="https://whatsapp.com/channel/0029VajnN629RZAbp8aZAa1E" class="more-tools-btn" target="_blank">JOIN WHATSAPP CHANNEL</a>
+            </div>
+            
+            <div class="created-by">
+                SYSTEM CREATED BY MR. WAQAR
             </div>
         </div>
-    </main>
+        
+        <footer>
+            <p>E3-HACKER SIM DATA BASE &copy; 2023 | ALL RIGHTS RESERVED</p>
+            <p>SECURE INFORMATION RETRIEVAL SYSTEM</p>
+        </footer>
+    </div>
 
-    <footer class="main-footer">
-        <p>&copy; MADE BY E3-HACKER</p>
-    </footer>
-
-    <!-- JavaScript logic -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const searchForm = document.getElementById('search-form');
-            const phoneNumberInput = document.getElementById('phone-number');
-            const searchButton = document.getElementById('search-button');
-            const buttonText = document.querySelector('.button-text');
-            const buttonLoader = document.querySelector('.button-loader');
-            const resultsContainer = document.getElementById('results-container');
-            const historyContainer = document.getElementById('history-container');
-            const historyList = document.getElementById('history-list');
-            const clearHistoryBtn = document.getElementById('clear-history');
-
-            const API_BASE_URL = 'https://fam-official.serv00.net/api/database.php?number=';
-            let searchHistory = [];
-            let currentApiResponse = {}; // Store the full API response
-
-            const currentTheme = localStorage.getItem('theme');
-            if (currentTheme) {
-                document.documentElement.setAttribute('data-theme', currentTheme);
-                themeToggleBtn.innerHTML = currentTheme === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-stars-fill"></i>';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Matrix background effect
+            function createMatrixEffect() {
+                const matrixBg = document.getElementById('matrixBg');
+                const chars = '01010101010101010101010101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&';
+                
+                for (let i = 0; i < 50; i++) {
+                    const char = document.createElement('div');
+                    char.className = 'matrix-char';
+                    char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                    char.style.left = Math.random() * 100 + 'vw';
+                    char.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                    char.style.animationDelay = Math.random() * 5 + 's';
+                    matrixBg.appendChild(char);
+                }
             }
-            themeToggleBtn.addEventListener('click', () => {
-                const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-                themeToggleBtn.innerHTML = theme === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-stars-fill"></i>';
-            });
-
-            const loadHistory = () => {
-                const storedHistory = localStorage.getItem('searchHistory');
-                if (storedHistory) {
-                    searchHistory = JSON.parse(storedHistory);
-                    renderHistory();
-                }
-            };
-            const saveHistory = (apiResponse) => {
-                const query = apiResponse.query;
-                const existingIndex = searchHistory.findIndex(item => item.query === query);
-                if (existingIndex > -1) searchHistory.splice(existingIndex, 1);
-                searchHistory.unshift(apiResponse);
-                if (searchHistory.length > 10) searchHistory.pop();
-                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-                renderHistory();
-            };
-            const renderHistory = () => {
-                if (searchHistory.length === 0) {
-                    historyContainer.style.display = 'none';
-                    return;
-                }
-                historyContainer.style.display = 'block';
-                historyList.innerHTML = searchHistory.map((item, index) => `
-                    <div class="history-item" data-history-index="${index}">
-                        <div class="info">
-                            <span class="name">${item.data[0]?.name || 'Unknown Name'}</span>
-                            <span class="number">${item.query}</span>
-                        </div>
-                        <div class="action-icon"><i class="bi bi-chevron-right"></i></div>
-                    </div>`).join('');
-            };
-            historyList.addEventListener('click', (e) => {
-                const historyItem = e.target.closest('.history-item');
-                if (historyItem) {
-                    const index = historyItem.getAttribute('data-history-index');
-                    const selectedRecord = searchHistory[index];
-                    phoneNumberInput.value = selectedRecord.query;
-                    displayResults(selectedRecord, true);
-                    resultsContainer.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-            clearHistoryBtn.addEventListener('click', () => {
-                searchHistory = [];
-                localStorage.removeItem('searchHistory');
-                renderHistory();
-            });
-
-            searchForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const query = phoneNumberInput.value.trim();
-                if (query.length < 10) {
-                    displayError('Invalid format. Please enter a valid number or CNIC.');
-                    return;
-                }
-                setLoadingState(true);
-                try {
-                    const response = await fetch(`${API_BASE_URL}?q=${query}`);
-                    if (!response.ok) throw new Error(`Network response error: ${response.status}`);
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                         if (data.query_type === 'cnic_notice') {
-                            displayCnicNotice(data.message, data.whatsapp_channel);
-                        } else if (data.data && data.data.length > 0) {
-                            displayResults(data);
-                        } else {
-                           displayError('No records found for this query.');
-                        }
-                    } else {
-                        displayError(data.error || 'An unknown error occurred.');
-                    }
-                } catch (error) {
-                    console.error('Fetch Error:', error);
-                    displayError('Failed to connect. Check your internet connection.');
-                } finally {
-                    setLoadingState(false);
-                }
-            });
-
-            const setLoadingState = (isLoading) => {
-                phoneNumberInput.disabled = isLoading;
-                searchButton.disabled = isLoading;
-                if (isLoading) {
-                    buttonText.style.display = 'none';
-                    buttonLoader.style.display = 'block';
-                    resultsContainer.innerHTML = '<div class="loader"></div>';
+            
+            createMatrixEffect();
+            
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-mode');
+                if (document.body.classList.contains('light-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i> LIGHT MODE';
                 } else {
-                    buttonText.style.display = 'inline';
-                    buttonLoader.style.display = 'none';
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i> DARK MODE';
                 }
-            };
-            const displayError = (message) => {
-                resultsContainer.innerHTML = `<div class="card alert alert-danger"><i class="bi bi-x-circle-fill"></i><span><strong>Error:</strong> ${message}</span></div>`;
-            };
-
-            const displayCnicNotice = (message, channelLink) => {
-                resultsContainer.innerHTML = `
-                    <div class="card alert alert-info text-center">
-                        <i class="bi bi-whatsapp" style="font-size: 3rem; color: var(--whatsapp-green);"></i>
-                        <h4 class="mt-3 fw-bold">${message}</h4>
-                        <p class="mb-3 text-muted">Get the latest updates by joining our official channel.</p>
-                        <a href="${channelLink}" target="_blank" class="btn btn-lg fw-bold" style="background-color: var(--whatsapp-green); color: white; border: none;">
-                            <i class="bi bi-whatsapp"></i> Join WhatsApp Channel
-                        </a>
+            });
+            
+            const searchBtn = document.getElementById('searchBtn');
+            const searchInput = document.getElementById('searchInput');
+            const resultContainer = document.getElementById('resultContainer');
+            const phoneOption = document.getElementById('phoneOption');
+            const cnicOption = document.getElementById('cnicOption');
+            
+            let searchType = 'phone'; // Default search type
+            
+            // Event listeners for search type selection
+            phoneOption.addEventListener('click', function() {
+                searchType = 'phone';
+                phoneOption.classList.add('active');
+                cnicOption.classList.remove('active');
+                searchInput.placeholder = 'ENTER 11-DIGIT PHONE NUMBER';
+                searchInput.maxLength = 11;
+                searchInput.value = '';
+                resultContainer.innerHTML = '<div class="no-data">ENTER 11-DIGIT PHONE TO SCAN</div>';
+            });
+            
+            cnicOption.addEventListener('click', function() {
+                searchType = 'cnic';
+                cnicOption.classList.add('active');
+                phoneOption.classList.remove('active');
+                searchInput.placeholder = 'ENTER 13-DIGIT CNIC NUMBER';
+                searchInput.maxLength = 13;
+                searchInput.value = '';
+                resultContainer.innerHTML = '<div class="no-data">ENTER 13-DIGIT CNIC TO SCAN</div>';
+            });
+            
+            searchBtn.addEventListener('click', searchInfo);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchInfo();
+                }
+            });
+            
+            function searchInfo() {
+                const searchValue = searchInput.value.trim();
+                
+                if (!searchValue) {
+                    showError(`PLEASE ENTER A ${searchType === 'phone' ? 'PHONE NUMBER' : 'CNIC NUMBER'}`);
+                    return;
+                }
+                
+                // Phone number validation
+                if (searchType === 'phone') {
+                    if (!/^\d+$/.test(searchValue)) {
+                        showValidationError('INVALID PHONE NUMBER', 'Phone number should contain only digits', '03123456789');
+                        return;
+                    }
+                    if (searchValue.length !== 11) {
+                        showValidationError('INVALID PHONE NUMBER LENGTH', 'Phone number must be exactly 11 digits', '03123456789');
+                        return;
+                    }
+                }
+                
+                // CNIC validation
+                if (searchType === 'cnic') {
+                    if (!/^\d+$/.test(searchValue)) {
+                        showValidationError('INVALID CNIC NUMBER', 'CNIC should contain only digits', '0000000000000');
+                        return;
+                    }
+                    if (searchValue.length !== 13) {
+                        showValidationError('INVALID CNIC LENGTH', 'CNIC must be exactly 13 digits', '0000000000000');
+                        return;
+                    }
+                }
+                
+                // Show loading state
+                resultContainer.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i> SCANNING DATABASE... PLEASE WAIT
                     </div>
                 `;
-            };
-
-            const formatDate = (isoString) => {
-                if (!isoString) return 'N/A';
-                try {
-                    return new Date(isoString).toLocaleDateString('en-US', {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                    });
-                } catch (e) {
-                    return 'Invalid Date';
-                }
-            };
-
-            const displayResults = (apiData, fromHistory = false) => {
-                currentApiResponse = apiData;
-                const records = apiData.data;
-
-                if (!fromHistory) {
-                    saveHistory(apiData);
-                }
-
-                let resultsHTML = `<h2 class="results-summary">${apiData.summary_text || `Found ${records.length} record(s)`}</h2>`;
                 
-                resultsHTML += records.map((record, index) => `
-                    <div class="card result-card">
-                        <button class="copy-btn" data-record-index="${index}" title="Copy Details"><i class="bi bi-clipboard"></i></button>
-                        <div class="result-card-header">
-                            <div class="result-card-header-info">
-                                <i class="bi bi-person-circle"></i><h3>${record.name || 'N/A'}</h3>
-                            </div>
-                            <span class="source-badge source-${apiData.source}">${apiData.source || 'N/A'}</span>
-                        </div>
-                        <ul class="result-details">
-                            <li><i class="bi bi-telephone-fill"></i><strong>Number:</strong><span>${record.number || 'N/A'}</span></li>
-                            <li><i class="bi bi-person-vcard-fill"></i><strong>CNIC:</strong><span>${record.cnic || 'N/A'}</span></li>
-                            <li><i class="bi bi-geo-alt-fill"></i><strong>Address:</strong><span>${record.address || 'N/A'}</span></li>
-                            <li><i class="bi bi-reception-4"></i><strong>Network:</strong>
-                                <span class="network-info">
-                                    ${record.network_logo ? `<img src="${record.network_logo}" alt="network logo" class="network-logo">` : ''}
-                                    ${record.network || record.network_code || 'N/A'}
-                                </span>
-                            </li>
-                            <li><i class="bi bi-power"></i><strong>Status:</strong>
-                                <span>${record.is_active ? '<span class="text-success fw-bold">Active</span>' : '<span class="text-danger fw-bold">Inactive</span>'}</span>
-                            </li>
-                             <li><i class="bi bi-calendar-plus"></i><strong>First Seen:</strong><span>${formatDate(record.first_seen)}</span></li>
-                            <li><i class="bi bi-calendar-check"></i><strong>Last Seen:</strong><span>${formatDate(record.last_seen)}</span></li>
-                        </ul>
-                    </div>`).join('');
-                resultsContainer.innerHTML = resultsHTML;
-            };
-
-            resultsContainer.addEventListener('click', (e) => {
-                const copyBtn = e.target.closest('.copy-btn');
-                if (copyBtn) {
-                    const index = parseInt(copyBtn.dataset.recordIndex, 10);
-                    const record = currentApiResponse.data[index];
-                    if (!record) return;
-
-                    const textToCopy = `
---- E3-HACKER Database Result ---
-Name: ${record.name || 'N/A'}
-Number: ${record.number || 'N/A'}
-CNIC: ${record.cnic || 'N/A'}
-Address: ${record.address || 'N/A'}
-Network: ${record.network || record.network_code || 'N/A'}
-Status: ${record.is_active ? 'Active' : 'Inactive'}
-First Seen: ${formatDate(record.first_seen)}
-Last Seen: ${formatDate(record.last_seen)}
-Source: ${currentApiResponse.source || 'N/A'}
---- Copied via MANI ---
-                    `.trim();
-
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        copyBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
-                        copyBtn.classList.add('copied');
-                        setTimeout(() => {
-                            copyBtn.innerHTML = '<i class="bi bi-clipboard"></i>';
-                            copyBtn.classList.remove('copied');
-                        }, 2000);
-                    }).catch(err => {
-                        console.error('Failed to copy text: ', err);
-                        alert('Failed to copy details.');
+                // Use the same API for both phone and CNIC search
+                searchByNumber(searchValue, searchType);
+            }
+            
+            function searchByNumber(searchValue, type) {
+                // Same API for both phone and CNIC
+                const apiUrl = `https://fam-official.serv00.net/api/database.php?number=${searchValue}`;
+                
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('NETWORK RESPONSE ERROR');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('API Response:', data);
+                        handleApiResponse(data, type, searchValue);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        // Try with proxy if direct fetch fails
+                        tryProxyFetch(searchValue, type);
                     });
+            }
+            
+            function tryProxyFetch(searchValue, type) {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const apiUrl = `https://fam-official.serv00.net/api/database.php?number=${searchValue}`;
+                
+                const url = proxyUrl + encodeURIComponent(apiUrl);
+                
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('PROXY RESPONSE ERROR');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Proxy API Response:', data);
+                        handleApiResponse(data, type, searchValue);
+                    })
+                    .catch(error => {
+                        console.error('Proxy fetch failed:', error);
+                        showError('DATABASE CONNECTION FAILED. TRY AGAIN.');
+                    });
+            }
+            
+            function handleApiResponse(data, type, searchValue) {
+                // Check if API returned success and has data
+                if (data && data.success && data.data && data.data.length > 0) {
+                    if (type === 'cnic') {
+                        // For CNIC search, show all numbers associated with this CNIC
+                        displayMultipleResults(data.data, searchValue);
+                    } else {
+                        // For phone search, show single result
+                        displaySingleResult(data.data[0]);
+                    }
+                } else {
+                    showNoData();
                 }
-            });
-
-            loadHistory();
+            }
+            
+            function displaySingleResult(userData) {
+                // Extract data from the nested response structure
+                const name = userData.name || "DATA NOT AVAILABLE";
+                const number = userData.number || "DATA NOT AVAILABLE";
+                const cnic = userData.cnic || "DATA NOT AVAILABLE";
+                const address = userData.address || "DATA NOT AVAILABLE";
+                
+                resultContainer.innerHTML = `
+                    <div class="result-row">
+                        <div class="result-label">NAME:</div>
+                        <div class="result-value">${name}</div>
+                    </div>
+                    <div class="result-row">
+                        <div class="result-label">NUMBER:</div>
+                        <div class="result-value">${number}</div>
+                    </div>
+                    <div class="result-row">
+                        <div class="result-label">CNIC:</div>
+                        <div class="result-value">${cnic}</div>
+                    </div>
+                    <div class="result-row">
+                        <div class="result-label">ADDRESS:</div>
+                        <div class="result-value">${address}</div>
+                    </div>
+                    <div class="credit">CREDIT: MR. ARSLAN</div>
+                `;
+            }
+            
+            function displayMultipleResults(userDataArray, cnicNumber) {
+                // Show all numbers associated with this CNIC
+                const numbersCount = userDataArray.length;
+                
+                let resultsHTML = `
+                    <div class="numbers-count">
+                        <i class="fas fa-mobile-alt"></i> TOTAL ${numbersCount} NUMBER(S) FOUND FOR CNIC: ${cnicNumber}
+                    </div>
+                `;
+                
+                userDataArray.forEach((userData, index) => {
+                    const name = userData.name || "DATA NOT AVAILABLE";
+                    const number = userData.number || "DATA NOT AVAILABLE";
+                    const cnic = userData.cnic || "DATA NOT AVAILABLE";
+                    const address = userData.address || "DATA NOT AVAILABLE";
+                    
+                    resultsHTML += `
+                        <div class="number-item">
+                            <div class="number-header">NUMBER ${index + 1}: ${number}</div>
+                            <div class="result-row">
+                                <div class="result-label">NAME:</div>
+                                <div class="result-value">${name}</div>
+                            </div>
+                            <div class="result-row">
+                                <div class="result-label">CNIC:</div>
+                                <div class="result-value">${cnic}</div>
+                            </div>
+                            <div class="result-row">
+                                <div class="result-label">ADDRESS:</div>
+                                <div class="result-value">${address}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                resultsHTML += `<div class="credit">CREDIT: MR. ARSLAN</div>`;
+                
+                resultContainer.innerHTML = resultsHTML;
+            }
+            
+            function showValidationError(title, message, example) {
+                resultContainer.innerHTML = `
+                    <div class="validation-error">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        <strong>${title}</strong><br>
+                        ${message}<br>
+                        <div class="example-number">EXAMPLE: ${example}</div>
+                    </div>
+                `;
+            }
+            
+            function showNoData() {
+                resultContainer.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-circle"></i><br>
+                        DATA NOT FOUND IN DATABASE
+                    </div>
+                `;
+            }
+            
+            function showError(message) {
+                resultContainer.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        ${message}
+                    </div>
+                `;
+            }
         });
     </script>
 </body>
